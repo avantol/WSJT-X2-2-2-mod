@@ -1,0 +1,13 @@
+~*
+TAGS
+tags
+*~
+junk*
+jnq*
+*.exe
+*.o
+*.mod
+*.pro.user
+*.txt
+cmake-build-debug
+cmake-build-release
