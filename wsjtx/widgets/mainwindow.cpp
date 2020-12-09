@@ -593,10 +593,11 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
           ui->txrb6->setChecked(true);
         }
 
-        //avt 11/29/20 log the QSO, but don't change QSO state
+        //avt 11/29/20 log the QSO using current data, but don't change QSO state
         if (newTxMsgIdx == 5) {   
           m_qsoStop = QDateTime::currentDateTimeUtc ().toString ("hhmm");
-          logQSOTimer.start(0);
+          //logQSOTimer.start(0);
+          on_logQSOButton_clicked();    //priority?
         }
       }
       else      //special cmd
