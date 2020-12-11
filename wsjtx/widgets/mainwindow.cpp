@@ -8165,7 +8165,7 @@ void MainWindow::statusUpdate () const
   auto tr_period = ui->sbTR->value ();
   if (!(ui->sbTR->isVisible () && ui->sbTR->isEnabled ()))
     {
-      tr_period = (int)m_TRperiod * 1000;         //avt 11/28/20 was quint32_max;
+      tr_period = (int)(m_TRperiod * 1000);         //avt 12/11/20 was quint32_max;
     }
   m_messageClient->status_update (m_freqNominal, m_mode, m_hisCall,
                                   QString::number (ui->rptSpinBox->value ()),
