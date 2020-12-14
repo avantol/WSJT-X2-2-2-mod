@@ -570,15 +570,15 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (m_messageClient, &MessageClient::setup_tx, [this] (int newTxMsgIdx, QString const& msg, bool skipGrid, bool useRR73) {    //avt 11/16/20
       m_externalCtrl = true;    //avt 11/19/20 configure for UDP listener special cases
       initExternalCtrl();       //disable Call 1st and Auto buttons 
+      //QApplication::beep();    //for debug
 
       if (newTxMsgIdx) {          //perform some QSO state action (mostly)
-        if (newTxMsgIdx == 6) {   //set up some kind of CQ, set options
 
+        if (newTxMsgIdx == 6) {   //set up some kind of CQ, set options
           //misc setup actions (*affects QSO state*)
           if (ui->tx1->isEnabled() == skipGrid) on_txrb1_doubleClicked();   //set/clear skip grid msg
           m_send_RR73 = !useRR73;         //set/clear use of RR73 msg
           on_txrb4_doubleClicked();       //set/clear use of RR73 msg
-
           //*now* set QSO state
           if (!msg.isEmpty()) {   //set up directed CQ
             ui->tx6->setText(msg);
@@ -591,6 +591,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
           m_bAutoReply = true;
           m_QSOProgress = CALLING;
           ui->txrb6->setChecked(true);
+          statusUpdate();                 //used as confirmation of cmd
+          return;
         }
 
         //avt 11/29/20 log the QSO using current data, but don't change QSO state
@@ -598,8 +600,18 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
           m_qsoStop = QDateTime::currentDateTimeUtc ().toString ("hhmm");
           //logQSOTimer.start(0);
           on_logQSOButton_clicked();    //priority?
+          return;
+        }
+
+        if (newTxMsgIdx == 7) {           //ack req
+          QString temp = m_currentMessage;
+          m_currentMessage = "EXT_CTRL";  //special msg ack code
+          statusUpdate();                 //used as confirmation of UDP requests enabled
+          m_currentMessage = temp;
+          return;
         }
       }
+
       else      //special cmd
       {
         m_externalCtrl = false;    //avt 12/4/20 de-init, WSJT-X back to normal operation
@@ -8178,7 +8190,8 @@ void MainWindow::statusUpdate () const
                                   static_cast<quint8> (m_config.special_op_id ()),
                                   ftol, tr_period, m_multi_settings->configuration_name (), 
                                   m_currentMessage.trimmed(), m_QSOProgress, ui->txFirstCheckBox->isChecked(),     //avt 11/16/20 UDP listener needs extra info
-                                  ui->cbCQonly->isVisible() and ui->cbCQonly->isChecked());  //avt 12/4/20
+                                  ui->cbCQonly->isVisible() and ui->cbCQonly->isChecked(),
+                                  ui->genMsg->text());  //avt 12/4/20
 }
 
 void MainWindow::childEvent (QChildEvent * e)

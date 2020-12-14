@@ -530,7 +530,8 @@ void MessageClient::status_update (Frequency f, QString const& mode, QString con
                                    , QString const& lastTxMsg   //avt 11/16/20
                                    , quint32 qsoProgress        //avt 11/16/20
                                    , bool txFirst               //avt 11/16/20
-                                   , bool cQonly)               //avt 12/4/20
+                                   , bool cQonly                //avt 12/4/20
+                                   , QString const& genMsg)     //avt 12/4/20
 {
   if (m_->server_port_ && !m_->server_string_.isEmpty ())
     {
@@ -540,8 +541,8 @@ void MessageClient::status_update (Frequency f, QString const& mode, QString con
           << tx_enabled << transmitting << decoding << rx_df << tx_df << de_call.toUtf8 ()
           << de_grid.toUtf8 () << dx_grid.toUtf8 () << watchdog_timeout << sub_mode.toUtf8 ()
           << fast_mode << special_op_mode << frequency_tolerance << tr_period << configuration_name.toUtf8 () 
-          << lastTxMsg.toUtf8 () << qsoProgress << txFirst << cQonly;    //avt 12/4/20
-      TRACE_UDP ("frequency:" << f << "mode:" << mode << "DX:" << dx_call << "report:" << report << "Tx mode:" << tx_mode << "tx_enabled:" << tx_enabled << "Tx:" << transmitting << "decoding:" << decoding << "Rx df:" << rx_df << "Tx df:" << tx_df << "DE:" << de_call << "DE grid:" << de_grid << "DX grid:" << dx_grid << "w/d t/o:" << watchdog_timeout << "sub_mode:" << sub_mode << "fast mode:" << fast_mode << "spec op mode:" << special_op_mode << "frequency tolerance:" << frequency_tolerance << "T/R period:" << tr_period << "configuration name:" << configuration_name "lastTxMsg:" << lastTxMsg << "qsoProgress:" << qsoProgress << "txFirst:" << txFirst << "cQonly:" << cQonly); //avt 12/4/20
+          << lastTxMsg.toUtf8 () << qsoProgress << txFirst << cQonly  << genMsg.toUtf8 ();    //avt 12/14/20
+      TRACE_UDP ("frequency:" << f << "mode:" << mode << "DX:" << dx_call << "report:" << report << "Tx mode:" << tx_mode << "tx_enabled:" << tx_enabled << "Tx:" << transmitting << "decoding:" << decoding << "Rx df:" << rx_df << "Tx df:" << tx_df << "DE:" << de_call << "DE grid:" << de_grid << "DX grid:" << dx_grid << "w/d t/o:" << watchdog_timeout << "sub_mode:" << sub_mode << "fast mode:" << fast_mode << "spec op mode:" << special_op_mode << "frequency tolerance:" << frequency_tolerance << "T/R period:" << tr_period << "configuration name:" << configuration_name "lastTxMsg:" << lastTxMsg << "qsoProgress:" << qsoProgress << "txFirst:" << txFirst << "cQonly:" << cQonly << "genMsg:" << genMsg); //avt 12/14/20
       m_->send_message (out, message);
     }
 }

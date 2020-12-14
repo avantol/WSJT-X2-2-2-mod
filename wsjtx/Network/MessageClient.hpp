@@ -57,7 +57,7 @@ public:
                              , QString const& dx_grid, bool watchdog_timeout, QString const& sub_mode
                              , bool fast_mode, quint8 special_op_mode, quint32 frequency_tolerance
                              , quint32 tr_period, QString const& configuration_name
-                             , QString const& lastTxMsg, quint32 qsoProgress, bool txFirst, bool cQOnly);    //avt 12/4/20
+                             , QString const& lastTxMsg, quint32 qsoProgress, bool txFirst, bool cQOnly, QString const& genMsg);    //avt 12/14/20
   Q_SLOT void decode (bool is_new, QTime time, qint32 snr, float delta_time, quint32 delta_frequency
                       , QString const& mode, QString const& message, bool low_confidence
                       , bool off_air);
