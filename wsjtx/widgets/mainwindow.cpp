@@ -591,6 +591,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
           m_bAutoReply = true;
           m_QSOProgress = CALLING;
           ui->txrb6->setChecked(true);
+          m_checkCmd = msg;               //used as confirmation of cmd
           statusUpdate();                 //used as confirmation of cmd
           return;
         }
@@ -8191,7 +8192,7 @@ void MainWindow::statusUpdate () const
                                   ftol, tr_period, m_multi_settings->configuration_name (), 
                                   m_currentMessage.trimmed(), m_QSOProgress, ui->txFirstCheckBox->isChecked(),     //avt 11/16/20 UDP listener needs extra info
                                   ui->cbCQonly->isVisible() and ui->cbCQonly->isChecked(),
-                                  ui->genMsg->text());  //avt 12/4/20
+                                  m_checkCmd);  //avt 12/15/20
 }
 
 void MainWindow::childEvent (QChildEvent * e)

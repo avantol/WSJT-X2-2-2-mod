@@ -528,6 +528,7 @@ private:
   bool    m_bTUmsg;
   bool    m_bBestSPArmed=false;
   bool    m_externalCtrl=false;   //avt 12/5/20
+  QString m_checkCmd;             //avt 12/15/20
 
   enum
     {
