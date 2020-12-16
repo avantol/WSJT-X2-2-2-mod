@@ -245,11 +245,12 @@ void MessageClient::impl::parse_message (QByteArray const& msg)
                 QByteArray msg;
                 bool skipGrid;
                 bool useRR73;
-                in >> newTxMsgIdx >> msg >> skipGrid >> useRR73;
-                TRACE_UDP ("Setup Tx newTxMsgIdx:" << newTxMsgIdx << "msg:" << msg << "skipGrid:" << skipGrid << "useRR73:"<< useRR73);
+                QByteArray check;
+                in >> newTxMsgIdx >> msg >> skipGrid >> useRR73 >> check;
+                TRACE_UDP ("Setup Tx newTxMsgIdx:" << newTxMsgIdx << "msg:" << msg << "skipGrid:" << skipGrid << "useRR73:" << useRR73< "check:" << check);
                 if (check_status (in) != Fail)
                   {
-                    Q_EMIT self_->setup_tx (newTxMsgIdx, QString::fromUtf8(msg), skipGrid, useRR73);
+                    Q_EMIT self_->setup_tx (newTxMsgIdx, QString::fromUtf8(msg), skipGrid, useRR73, QString::fromUtf8(check));
                   }
               }
               break;

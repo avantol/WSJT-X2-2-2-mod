@@ -134,7 +134,7 @@ public:
   Q_SIGNAL void location (QString const&);
 
   // this signal is emitted if the server has requested Tx enabled
-  Q_SIGNAL void setup_tx (int newTxMsgIdx, QString const& msg, bool skipGrid, bool useRR73);         //avt 11/28/20
+  Q_SIGNAL void setup_tx (int newTxMsgIdx, QString const& msg, bool skipGrid, bool useRR73, QString const& check);         //avt 11/28/20
 
 private:
   class impl;

@@ -567,7 +567,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (m_messageClient, &MessageClient::switch_configuration, m_multi_settings, &MultiSettings::select_configuration);
   connect (m_messageClient, &MessageClient::configure, this, &MainWindow::remote_configure);
 
-  connect (m_messageClient, &MessageClient::setup_tx, [this] (int newTxMsgIdx, QString const& msg, bool skipGrid, bool useRR73) {    //avt 11/16/20
+  connect (m_messageClient, &MessageClient::setup_tx, [this] (int newTxMsgIdx, QString const& msg, bool skipGrid, bool useRR73, QString const& check) {    //avt 11/16/20
       m_externalCtrl = true;    //avt 11/19/20 configure for UDP listener special cases
       initExternalCtrl();       //disable Call 1st and Auto buttons 
       //QApplication::beep();    //for debug
@@ -591,8 +591,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
           m_bAutoReply = true;
           m_QSOProgress = CALLING;
           ui->txrb6->setChecked(true);
-          m_checkCmd = msg;               //used as confirmation of cmd
-          statusUpdate();                 //used as confirmation of cmd
+          m_checkCmd = check;             //used as confirmation of cmd
+          statusUpdate();                 //used as confirmation of UDP requests enabled
           return;
         }
 
@@ -605,10 +605,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         }
 
         if (newTxMsgIdx == 7) {           //ack req
-          QString temp = m_currentMessage;
-          m_currentMessage = "EXT_CTRL";  //special msg ack code
+          m_checkCmd = check;             //used as confirmation of cmd
           statusUpdate();                 //used as confirmation of UDP requests enabled
-          m_currentMessage = temp;
           return;
         }
       }
