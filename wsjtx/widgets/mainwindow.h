@@ -529,6 +529,7 @@ private:
   bool    m_bBestSPArmed=false;
   bool    m_externalCtrl=false;   //avt 12/5/20
   QString m_checkCmd;             //avt 12/15/20
+  bool    m_dblClk;               //avt new 12/24/20
 
   enum
     {
@@ -721,6 +722,7 @@ private:
   void locationChange(QString const& location);
   void replayDecodes ();
   void postDecode (bool is_new, DecodedText decoded_text);  //avt 12/5/20
+  void enqueueDecode (bool modifier, DecodedText decoded_text);   //avt new 12/22/20
   void postWSPRDecode (bool is_new, QStringList message_parts);
   void enable_DXCC_entity (bool on);
   void switch_mode (Mode);
@@ -753,7 +755,7 @@ private:
   void decodeDone ();
   void subProcessFailed (QProcess *, int exit_code, QProcess::ExitStatus);
   void subProcessError (QProcess *, QProcess::ProcessError);
-  void statusUpdate () const;
+  void statusUpdate ();    //const;   avt new 12/25/20
   void update_watchdog_label ();
   void on_the_minute ();
   void add_child_to_event_filter (QObject *);
