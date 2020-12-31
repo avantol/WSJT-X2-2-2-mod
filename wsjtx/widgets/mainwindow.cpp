@@ -5706,6 +5706,8 @@ void MainWindow::on_dxGridEntry_textChanged (QString const& grid)
 void MainWindow::on_genStdMsgsPushButton_clicked()         //genStdMsgs button
 {
   genStdMsgs(m_rpt);
+  m_dblClk = true;      //avt new 12/31/20
+  statusUpdate();       //avt new 12/31/20
 }
 
 void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
