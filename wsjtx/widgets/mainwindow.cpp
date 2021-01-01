@@ -607,6 +607,16 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
           statusUpdate();                 //used as confirmation of UDP requests enabled
           return;
         }
+
+        if (newTxMsgIdx == 255) {         //avt new 1/1/21
+          // Log to N1MM Logger
+          if (m_config.broadcast_to_n1mm () && m_config.valid_n1mm_info ()) {
+            QUdpSocket sock;
+            if (-1 == sock.writeDatagram (msg.toUtf8(), QHostAddress {m_config.n1mm_server_name ()}, m_config.n1mm_server_port ())) {
+            MessageBox::warning_message (this, tr ("Error sending log to N1MM"), tr ("Write returned \"%1\"").arg (sock.errorString ()));
+            }
+          }
+        }
       }
 
       else      //special cmd
@@ -9204,3 +9214,4 @@ void MainWindow::initExternalCtrl()    //avt 12/5/20
   }
 
 }
+
