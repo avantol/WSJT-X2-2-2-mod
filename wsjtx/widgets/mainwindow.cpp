@@ -4571,7 +4571,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
   DecodedText message {cursor.block().text().trimmed().remove("TU; ")};
 
   if (!(modifiers & Qt::ShiftModifier) && (modifiers & Qt::AltModifier)) {    //avt new 12/22/20 detect alt/dbl-click and ctrl/alt/dbl-click (but not shift/dbl-click)
-    enqueueDecode((modifiers & Qt::ControlModifier), DecodedText {message});  //avt new 12/22/20
+    enqueueDecode(DecodedText {message}, (modifiers & Qt::ControlModifier), false, false);  //avt 1/2/2
     return;                   //avt new 12/22/20
   }                           //avt new 12/22/20
   m_dblClk = true;            //avt new 12/24/20 must only be set if not alt-key related
@@ -7736,24 +7736,77 @@ void MainWindow::postDecode (bool is_new, DecodedText decoded_text)      //avt 1
                                , QChar {'?'} == decode.mid (has_seconds ? 24 + 21 : 22 + 21, 1)
                                , m_diskData);
     }
+
+  //avt 1/2/21
+  bool callB4;
+  bool callB4onBand;
+  bool countryB4;
+  bool countryB4onBand;
+  bool gridB4;
+  bool gridB4onBand;
+  bool continentB4;
+  bool continentB4onBand;
+  bool CQZoneB4;
+  bool CQZoneB4onBand;
+  bool ITUZoneB4;
+  bool ITUZoneB4onBand;
+ 
+  if (!(message.contains (" CQ ")
+    || message.contains (" CQDX ")
+    || message.contains (" QRZ ")))
+  {
+    return;
+  }
+
+  //avt 1/2/21
+  QString grid;
+  QString call;
+  decoded_text.deCallAndGrid(call, grid);
+
+  if(call.length()<3) return;
+  if(!call.contains(QRegExp("[0-9]|[A-Z]"))) return;
+
+  int nDmiles = 0, nDkm = 0;
+  if (grid.size() == 4)
+  {
+    qint64 nsec = (QDateTime::currentMSecsSinceEpoch()/1000) % 86400;
+    double utch=nsec/3600.0;
+    int nAz,nEl,nHotAz,nHotABetter;
+    azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
+            const_cast <char *> ((grid + "      ").left (6).toLatin1().constData()),&utch,
+            &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
+  }
+
+  //avt 1/2/21
+  auto const& looked_up = m_logBook.countries ()->lookup (call);
+  m_logBook.match (call, m_mode, grid, looked_up, callB4, countryB4, gridB4, continentB4, CQZoneB4, ITUZoneB4);
+  m_logBook.match (call, m_mode, grid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+                 continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+  if(grid=="") {
+    gridB4=true;
+    gridB4onBand=true;
+  }
+
+  //DX defined as not same continent
+  bool isDx = (message.contains (" CQ DX ") || message.contains (" CQDX ")) && looked_up.continent != m_logBook.countries()->lookup(m_config.my_callsign()).continent;
+  if (!callB4onBand) enqueueDecode (decoded_text, false, true, isDx);   //avt 1/2/21
 }
 
 //avt new 12/22/20
-void MainWindow::enqueueDecode (bool modifier, DecodedText decoded_text)      //avt 12/5/20
+void MainWindow::enqueueDecode (DecodedText decoded_text, bool modifier, bool autoGen, bool isDx)      //avt 1/2/21
 {
-  bool spare = true;
   QString message = decoded_text.string();      //avt 12/5/20
   auto const& decode = message.trimmed ();
   auto const& parts = decode.left (22).split (' ', SkipEmptyParts);
   if (parts.size () >= 5 && (!m_externalCtrl || decoded_text.isStandardMessage()))   //avt 12/5/20
     {
       auto has_seconds = parts[0].size () > 4;
-      m_messageClient->enqueue_decode (spare
+      m_messageClient->enqueue_decode (autoGen            //avt 1/2/21
                                , QTime::fromString (parts[0], has_seconds ? "hhmmss" : "hhmm")
                                , parts[1].toInt ()
                                , parts[2].toFloat (), parts[3].toUInt (), parts[4]
                                , decode.mid (has_seconds ? 24 : 22)
-                               , QChar {'?'} == decode.mid (has_seconds ? 24 + 21 : 22 + 21, 1)
+                               , isDx
                                , modifier);
     }
 }
